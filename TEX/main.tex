@@ -13,21 +13,21 @@
 
 \lstset{
     language=Python,
-    backgroundcolor=\color{backcolour},   
+    backgroundcolor=\color{backcolour},
     commentstyle=\color{codegreen},
     keywordstyle=\color{magenta},
     numberstyle=\tiny\color{codegray},
     stringstyle=\color{codepurple},
     basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
     showstringspaces=false,
-    showtabs=false,                  
+    showtabs=false,
     tabsize=4,
     frame=single
 }
@@ -59,14 +59,14 @@ Para transformar datos de baja entropía en una clave robusta, se utiliza el alg
 \begin{lstlisting}[language=Python, caption=Implementación de derivación de clave con estándar OWASP]
 # Derivacion de la Strong Key usando PBKDF2-HMAC-SHA256
 strong_key = PBKDF2(
-    password=u_rol, 
-    salt=salt_utilizado, 
-    dkLen=32, 
+    password=u_rol,
+    salt=salt_utilizado,
+    dkLen=32,
     count=600000,  # 600k iteraciones segun estandar OWASP 2023
     hmac_hash_module=SHA256
 )
 \end{lstlisting}
-    
+
     \item \textbf{Uso de SALT:} Se inyecta un \textit{salt} aleatorio de 16 bytes para mitigar ataques de tablas de arcoíris (Rainbow Tables). Esto garantiza que identidades similares produzcan claves únicas.
     La decisión se tomó en base a la recomendación del NIST SP 800-132, que indica una longitud de al menos 128 bits para el SALT.
 \end{itemize}
@@ -247,9 +247,9 @@ demas usuarios del consejo como si fuese un "error" de autenticidad.
 
 \subsubsection{Eleccion del primo: $PRIME = 2^{521} - 1$}
 
-Primero tenemos que escoger un numero para acotar los valores debido a que el esquema de Shamir necesita un campo  finito, este 
-numero debe ser primo para que todo número no nulo sí tenga inverso multiplicativo Esto nos  garantiza que la aritmética modular 
-se encuentre acotado en la cantidad de bits del secreto. Usaremos un primo de Mersenne ya que facilita todo lo anterior y es eficiente 
+Primero tenemos que escoger un numero para acotar los valores debido a que el esquema de Shamir necesita un campo  finito, este
+numero debe ser primo para que todo número no nulo sí tenga inverso multiplicativo Esto nos  garantiza que la aritmética modular
+se encuentre acotado en la cantidad de bits del secreto. Usaremos un primo de Mersenne ya que facilita todo lo anterior y es eficiente
 a nivel de software y hardware.
 
 \begin{figure}[ht]
@@ -257,25 +257,25 @@ a nivel de software y hardware.
     $PRIME = 2^{521} - 1$
 \end{figure}
 
-Como nuestro secreto tiene 256 bits, nuestro primo de Mersenne seleccionado es mucho mayor y garantiza que ningún secreto quede fuera 
+Como nuestro secreto tiene 256 bits, nuestro primo de Mersenne seleccionado es mucho mayor y garantiza que ningún secreto quede fuera
 del rango.
 
 \subsubsection{Polinomio de grado 2}
 
-En nuestro caso se nos pidió realizar un secreto de Shamir (3,4) por lo cual un polinomio de grado k - 1 (k = 3) garantiza que se 
-necesiten 3 o mas  puntos para poder reconstruir el polinomio de Lagrange y poder acceder al secreto que se encuentra en $f(0)$. 
+En nuestro caso se nos pidió realizar un secreto de Shamir (3,4) por lo cual un polinomio de grado k - 1 (k = 3) garantiza que se
+necesiten 3 o mas  puntos para poder reconstruir el polinomio de Lagrange y poder acceder al secreto que se encuentra en $f(0)$.
 El caso de tener 4 llaves se genera una redundancia pero es útil en caso de que una llave se pierda.
 
 
 \subsubsection{Generación del Secreto}
 
-Para la generación de la clave secreta (secreto) utilizamos la librería secret de Python que genera aleatoriedad a través del sistema 
-operativo siendo menos predecible que usar la librería random que a través de análisis complejos se puede obtener el valor. Ademas de 
+Para la generación de la clave secreta (secreto) utilizamos la librería secret de Python que genera aleatoriedad a través del sistema
+operativo siendo menos predecible que usar la librería random que a través de análisis complejos se puede obtener el valor. Ademas de
 que la librería encaja perfectamente con los bytes solicitados en el enunciado (32 bytes/ 256 bits) según la documentación.
 
 \subsubsection{Reconstrucción del Secreto}
 
-La reconstrucción se realiza mediante interpolación de Lagrange sobre el campo finito definido por el polinomio PRIME. Como el polinomio 
+La reconstrucción se realiza mediante interpolación de Lagrange sobre el campo finito definido por el polinomio PRIME. Como el polinomio
 es de grado 2, se necesitan exactamente 3 puntos (Llaves). Evaluando el polinomio interpolado en $x = 0$ se obtiene el secreto original.
 
 \begin{figure}[ht]
@@ -286,8 +286,8 @@ es de grado 2, se necesitan exactamente 3 puntos (Llaves). Evaluando el polinomi
 
 \subsubsection{Simulacion}
 
-En el código encontraremos una función "simulacion(f1, f2, f3, f4, secreto)" esta se encarga de simular todos los casos posibles con 1 2 3 y 4 
-partes para poder acceder al secreto, este realiza interpolación de lagrange implementado en la función "interpolacion\_lagrange(puntos)" 
+En el código encontraremos una función "simulacion(f1, f2, f3, f4, secreto)" esta se encarga de simular todos los casos posibles con 1 2 3 y 4
+partes para poder acceder al secreto, este realiza interpolación de lagrange implementado en la función "interpolacion\_lagrange(puntos)"
 para luego comparar si existe un match entre el secreto original y el obtenido con la interpolación de puntos
 
 
@@ -310,7 +310,7 @@ Sin la implementación de un SALT, la función de derivación sería puramente d
 
 Esta predictibilidad permite a un atacante realizar un \textit{Ataque de Diccionario} o utilizar \textit{Rainbow Tables} (tablas de búsqueda pre-calculadas), donde se almacena una gran cantidad de combinaciones de nombres comunes y sus respectivos resultados de PBKDF2, permitiendo una recuperación de llaves casi instantánea en caso de que la base de datos sea vulnerada.
 
-\subsection{Mecanismo de Defensa del SALT}
+\subsubsection{Mecanismo de Defensa del SALT}
 La inclusión de un SALT de 128 bits (16 bytes) transforma la ecuación de derivación, rompiendo la relación estática entre la identidad y la llave:
 \begin{equation}
     Key = PBKDF2(Nombre + Rol + SALT)
@@ -320,9 +320,9 @@ El SALT garantiza la seguridad del sistema al lograr principalmente lo siguiente
 
 \begin{enumerate}
     \item \textbf{Explosión del Espacio de Búsqueda:} Al introducir 128 bits de entropía adicional, el atacante ya no puede pre-calcular una tabla para un nombre. Tendría que calcular una tabla para cada una de las $2^{128}$ variaciones posibles de SALT. El almacenamiento requerido para lograr ese cálculo excede la capacidad física de los sistemas de cómputo actual.
-    
+
     \item \textbf{Invalidez del Pre-cómputo:} El SALT obliga al atacante a realizar el esfuerzo computacional completo ($600,000$ iteraciones) de forma individual para cada miembro del equipo. No es posible reutilizar el cálculo de una identidad para otra, incluso si los nombres son idénticos, ya que cada carpeta \texttt{keys/\{nombre\}/} contiene un archivo \texttt{.bin} con un SALT único.
-    
+
     \item \textbf{Unicidad de Salida:} Garantiza que si dos usuarios poseen el mismo nombre y rol, sus llaves RSA resultantes sean bit a bit diferentes, evitando colisiones de identidad en el repositorio compartido.
 \end{enumerate}
 
@@ -330,9 +330,9 @@ El SALT garantiza la seguridad del sistema al lograr principalmente lo siguiente
 \subsection{C) El Error del Punto Flotante}
 \textbf{¿Por qué la aritmetica decimal rompe el esquema de Shamir?} \\
 
-La interpolación de Lagrange calcula el secreto f(0) con una fórmula que involucra divisiones, multiplicaciones y sumas de números demasiado 
-grandes o demasiado pequeños. Computacionalmente cada numero tiene un error de redondeo debido a los estándares (IEEE 754), cuando estos números 
-se operan los errores de redondeo se se amplifican haciendo que el calculo de f(0) se impreciso y puede llevar a errores a la hora de volver a 
+La interpolación de Lagrange calcula el secreto f(0) con una fórmula que involucra divisiones, multiplicaciones y sumas de números demasiado
+grandes o demasiado pequeños. Computacionalmente cada numero tiene un error de redondeo debido a los estándares (IEEE 754), cuando estos números
+se operan los errores de redondeo se se amplifican haciendo que el calculo de f(0) se impreciso y puede llevar a errores a la hora de volver a
 obtener el Secreto haciendo que el secreto original sea inservible.
 
 
