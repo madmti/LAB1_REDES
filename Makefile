@@ -60,7 +60,7 @@ build:
 	@echo "Generando informe.."
 	@cd TEX && pdflatex -interaction=nonstopmode main.tex 1> /dev/null && cp main.pdf ../PDF/$(FORMAT).pdf
 	@echo "Comprimiendo archivos..."
-	@tar -cvzf $(FORMAT).tar.gz PDF/* CODIGO/* README.md requirements.txt
+	@tar -cvzf $(FORMAT).tar.gz PDF/* CODIGO/* README.md requirements.txt Makefile pyrightconfig.json
 
 clean:
 	@echo "Limpiando archivos temporales..."
